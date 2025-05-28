@@ -10,26 +10,38 @@ import UserNotifications
 
 struct ContentView: View {
     var body: some View {
-        VStack {
+        VStack(spacing: 20) {
+            Text("Simple Alarm")
+                .font(.largeTitle)
+                .padding()
+
             Button("Request Notification Permission") {
                 UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { granted, error in
                     if granted {
-                        print("Permission granted")
+                        print("Permission granted.")
+                    } else {
+                        print("Permission denied.")
                     }
                 }
             }
 
-            Button("Schedule Notification") {
+            Button("Set Alarm for 3 seconds from now") {
                 let content = UNMutableNotificationContent()
-                content.title = "Alarm!"
-                content.body = "This is your scheduled alarm notification."
-                content.sound = .default
+                content.title = "⏰ Alarm"
+                content.body = "Time to wake up!"
+                content.sound = UNNotificationSound.default
 
-                let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+                let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 3, repeats: false)
 
                 let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
 
-                UNUserNotificationCenter.current().add(request)
+                UNUserNotificationCenter.current().add(request) { error in
+                    if let error = error {
+                        print("Error scheduling notification: \(error)")
+                    } else {
+                        print("Alarm set for 3 seconds from now.")
+                    }
+                }
             }
         }
         .padding()
