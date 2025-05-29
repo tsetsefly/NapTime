@@ -17,6 +17,10 @@ struct NapTimeApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                // .onAppear {
+                //     // Automatically start the alarm sound when the app opens
+                //     AlarmSoundManager.shared.startLoopingAlarm()
+                // }
         }
     }
 }

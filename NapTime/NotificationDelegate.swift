@@ -1,19 +1,35 @@
 import UserNotifications
 
 class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
-    static let shared = NotificationDelegate()
+    static let shared = NotificationDelegate()  // ✅ This line creates the shared instance
 
     private override init() {
         super.init()
     }
 
-    // This method is called when a notification is delivered while the app is in the foreground
+    // Foreground notifications
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
-        // Show the notification as a banner and play sound, even in foreground
+        if notification.request.identifier == "alarmNotification" {
+            AlarmSoundManager.shared.startLoopingAlarm()
+        }
+
         completionHandler([.banner, .sound])
+    }
+
+    // When user taps the notification
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        if response.notification.request.identifier == "alarmNotification" {
+            AlarmSoundManager.shared.startLoopingAlarm()
+        }
+
+        completionHandler()
     }
 }

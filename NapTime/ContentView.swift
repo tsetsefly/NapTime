@@ -33,7 +33,11 @@ struct ContentView: View {
 
                 let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 3, repeats: false)
 
-                let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+                let request = UNNotificationRequest(
+                    identifier: "alarmNotification",
+                    content: content,
+                    trigger: trigger
+                )
 
                 UNUserNotificationCenter.current().add(request) { error in
                     if let error = error {
@@ -42,6 +46,10 @@ struct ContentView: View {
                         print("Alarm set for 3 seconds from now.")
                     }
                 }
+            }
+
+            Button("Stop Alarm") {
+                AlarmSoundManager.shared.stopAlarm()
             }
         }
         .padding()
