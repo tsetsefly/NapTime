@@ -118,7 +118,14 @@ struct ContentView: View {
     }
 
     func scheduleAlarm(in seconds: Int) {
+        // ✅ Stop any currently playing alarm
+        AlarmSoundManager.shared.stopAlarm()
+
+        // ✅ Reset all alarm logic state
         AlarmSoundManager.shared.resetPlaybackState()
+        CountdownManager.shared.stopCountdown()  // 🔥 This clears countdown + "Wake up!!!"
+
+        print("Alarm reset")
 
         let content = UNMutableNotificationContent()
         content.title = "⏰ Alarm"
