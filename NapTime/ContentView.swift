@@ -51,10 +51,26 @@ struct ContentView: View {
                     .cornerRadius(10)
             }
 
+            Divider()
+
             Button(action: {
                 scheduleAlarm(in: 5)
             }) {
-                Text("Set Alarm for 5 seconds")
+                Text("TESTING: Set Alarm for 5 seconds")
+                    .font(.headline)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+
+            Divider()
+
+            Button(action: {
+                scheduleAlarm(in: 600)
+            }) {
+                Text("Set Alarm for 10 minutes")
                     .font(.headline)
                     .padding()
                     .frame(maxWidth: .infinity)
@@ -69,6 +85,8 @@ struct ContentView: View {
                     .monospacedDigit()
                     .foregroundColor(.red)
             }
+
+            Divider()
 
             Button(action: {
                 stopCountdown()
