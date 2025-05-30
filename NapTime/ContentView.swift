@@ -10,22 +10,57 @@ import UserNotifications
 
 struct ContentView: View {
     @ObservedObject var countdownManager = CountdownManager.shared
+    @State private var notificationPermissionGranted: Bool? = nil
 
     let countdownTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
+    func checkNotificationPermission() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            DispatchQueue.main.async {
+                notificationPermissionGranted = (
+                    settings.authorizationStatus == .authorized ||
+                    settings.authorizationStatus == .provisional
+                )
+            }
+        }
+    }
+
     var body: some View {
         VStack(spacing: 20) {
-            Text("Simple Alarm")
+            Text("NapTime Alarm")
                 .font(.largeTitle)
 
-            Button("Request Notification Permission") {
-                UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { granted, error in
-                    print(granted ? "Permission granted" : "Permission denied")
-                }
+            if let permission = notificationPermissionGranted {
+                Text(permission ? "🔔 Notifications Enabled" : "🚫 Notifications Disabled")
+                    .font(.subheadline)
+                    .foregroundColor(permission ? .green : .red)
             }
 
-            Button("Set Alarm for 5 seconds from now") {
+            Button(action: {
+                UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { granted, _ in
+                    print(granted ? "Permission granted" : "Permission denied")
+                    checkNotificationPermission() // ✅ refresh the status
+                }
+            }) {
+                Text("Request Notification Permission")
+                    .font(.subheadline)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.gray.opacity(0.2))
+                    .foregroundColor(.primary)
+                    .cornerRadius(10)
+            }
+
+            Button(action: {
                 scheduleAlarm(in: 5)
+            }) {
+                Text("Set Alarm for 5 seconds")
+                    .font(.headline)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
             }
 
             if let countdown = countdownManager.countdownValue {
@@ -35,13 +70,24 @@ struct ContentView: View {
                     .foregroundColor(.red)
             }
 
-            Button("Stop Countdown") {
+            Button(action: {
                 stopCountdown()
+            }) {
+                Text("Stop Alarm")
+                    .font(.headline)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.red)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
             }
         }
         .padding()
         .onReceive(countdownTimer) { _ in
             tickCountdown()
+        }
+        .onAppear {
+            checkNotificationPermission()
         }
     }
 
