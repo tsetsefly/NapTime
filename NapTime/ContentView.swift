@@ -144,7 +144,10 @@ struct ContentView: View {
             }
 
             Button(action: {
-                showRestoreSilentModeReminder = true
+                stopCountdown()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    showRestoreSilentModeReminder = true
+                }
             }) {
                 Text("Stop Alarm")
                     .font(.headline)
