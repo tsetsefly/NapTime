@@ -79,14 +79,14 @@ struct ContentView: View {
                     .cornerRadius(10)
             }
 
-            if let countdown = countdownManager.countdownValue {
+            Divider()
+
+            if countdownManager.isCountingDown, let countdown = countdownManager.countdownValue {
                 Text("Alarm in: \(countdown)s")
                     .font(.title2)
                     .monospacedDigit()
                     .foregroundColor(.red)
             }
-
-            Divider()
 
             Button(action: {
                 stopCountdown()
@@ -106,6 +106,9 @@ struct ContentView: View {
         }
         .onAppear {
             checkNotificationPermission()
+            if countdownManager.countdownValue == 0 || countdownManager.countdownValue == nil {
+                countdownManager.stopCountdown()
+            }
         }
     }
 

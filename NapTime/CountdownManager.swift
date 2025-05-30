@@ -15,6 +15,7 @@ class CountdownManager: ObservableObject {
     }
 
     func stopCountdown() {
+        print("⏹ Stopping countdown")
         countdownValue = nil
         isCountingDown = false
     }
