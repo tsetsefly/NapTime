@@ -95,20 +95,21 @@ struct ContentView: View {
                     .cornerRadius(10)
             }
 
-            Divider()
+            // // 5-sec alarm for debugging, testing
+            // Divider()
 
-            Button(action: {
-                pendingAlarmTime = 5
-                showSilentModeWarning = true
-            }) {
-                Text("TESTING: Set Alarm for 5 seconds")
-                    .font(.headline)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-            }
+            // Button(action: {
+            //     pendingAlarmTime = 5
+            //     showSilentModeWarning = true
+            // }) {
+            //     Text("TESTING: Set Alarm for 5 seconds")
+            //         .font(.headline)
+            //         .padding()
+            //         .frame(maxWidth: .infinity)
+            //         .background(Color.blue)
+            //         .foregroundColor(.white)
+            //         .cornerRadius(10)
+            // }
 
             Divider()
 
@@ -168,7 +169,7 @@ struct ContentView: View {
                 countdownManager.stopCountdown()
             }
         }
-        .alert("Reminder", isPresented: $showSilentModeWarning, actions: {
+        .alert("🚨 Reminder 🚨", isPresented: $showSilentModeWarning, actions: {
             Button("Continue") {
                 if let seconds = pendingAlarmTime {
                     scheduleAlarm(in: seconds)
@@ -178,9 +179,9 @@ struct ContentView: View {
                 pendingAlarmTime = nil
             }
         }, message: {
-            Text("Make sure your phone is not on Silent Mode or Do Not Disturb, otherwise the alarm may not sound.")
+            Text("Make sure your phone is not on Silent Mode or Do Not Disturb, otherwise the alarm will NOT sound.")
         })
-        .alert("Reminder", isPresented: $showRestoreSilentModeReminder, actions: {
+        .alert("🚨 Reminder 🚨", isPresented: $showRestoreSilentModeReminder, actions: {
             Button("OK") {
                 stopCountdown()
             }
