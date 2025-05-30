@@ -113,6 +113,8 @@ struct ContentView: View {
     }
 
     func scheduleAlarm(in seconds: Int) {
+        AlarmSoundManager.shared.resetPlaybackState()
+
         let content = UNMutableNotificationContent()
         content.title = "⏰ Alarm"
         content.body = "Time to wake up!"

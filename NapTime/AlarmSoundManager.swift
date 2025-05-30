@@ -42,4 +42,8 @@ class AlarmSoundManager {
     func markAlreadyPlayedViaNotification() {
         alreadyPlayedViaNotification = true
     }
+
+    func resetPlaybackState() {
+        alreadyPlayedViaNotification = false
+    }
 }
