@@ -1,3 +1,4 @@
+import Foundation
 import UserNotifications
 
 class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
@@ -14,7 +15,15 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
         if notification.request.identifier == "alarmNotification" {
+            // AlarmSoundManager.shared.startLoopingAlarm() // ✅ This line starts the alarm sound with notifications in foreground
+            print("🔔 Alarm triggered in foreground — suppressing banner/sound")
             AlarmSoundManager.shared.startLoopingAlarm()
+            
+            // ✅ Do NOT show banner or system sound in foreground
+            completionHandler([]) // suppress all UI
+        } else {
+            // Default behavior for other notifications
+            completionHandler([.banner, .sound])
         }
 
         completionHandler([.banner, .sound])
@@ -27,7 +36,15 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
         if response.notification.request.identifier == "alarmNotification" {
-            AlarmSoundManager.shared.startLoopingAlarm()
+            print("🔔 Alarm tapped in background")
+
+            // ✅ Mark that the system already played the sound
+            AlarmSoundManager.shared.markAlreadyPlayedViaNotification()
+            
+            DispatchQueue.main.async {
+                CountdownManager.shared.stopCountdown()
+            }
+            // AlarmSoundManager.shared.startLoopingAlarm()
         }
 
         completionHandler()

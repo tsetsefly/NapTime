@@ -9,10 +9,8 @@ import SwiftUI
 import UserNotifications
 
 struct ContentView: View {
-    @State private var countdownValue: Int? = nil
-    @State private var isCountingDown = false
+    @ObservedObject var countdownManager = CountdownManager.shared
 
-    // SwiftUI-native timer that ticks every second
     let countdownTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     var body: some View {
@@ -30,7 +28,7 @@ struct ContentView: View {
                 scheduleAlarm(in: 5)
             }
 
-            if let countdown = countdownValue {
+            if let countdown = countdownManager.countdownValue {
                 Text("Alarm in: \(countdown)s")
                     .font(.title2)
                     .monospacedDigit()
@@ -43,11 +41,7 @@ struct ContentView: View {
         }
         .padding()
         .onReceive(countdownTimer) { _ in
-            guard isCountingDown, let value = countdownValue, value > 0 else { return }
-            countdownValue = value - 1
-            if countdownValue == 0 {
-                isCountingDown = false
-            }
+            tickCountdown()
         }
     }
 
@@ -66,21 +60,27 @@ struct ContentView: View {
             } else {
                 print("Alarm scheduled.")
                 DispatchQueue.main.async {
-                    countdownValue = seconds
-                    isCountingDown = true
+                    countdownManager.startCountdown(from: seconds)
                 }
             }
         }
     }
 
     func stopCountdown() {
-        countdownValue = nil
-        isCountingDown = false
-
-        // ❌ Cancel all pending alarm notifications
+        countdownManager.stopCountdown()
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["alarmNotification"])
-
-        // 🔇 Stop alarm sound if it's currently playing
         AlarmSoundManager.shared.stopAlarm()
+    }
+
+    func tickCountdown() {
+        guard countdownManager.isCountingDown,
+              let value = countdownManager.countdownValue,
+              value > 0 else { return }
+
+        countdownManager.countdownValue = value - 1
+
+        if countdownManager.countdownValue == 0 {
+            countdownManager.isCountingDown = false
+        }
     }
 }
