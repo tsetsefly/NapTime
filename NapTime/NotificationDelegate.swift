@@ -25,8 +25,6 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
             // Default behavior for other notifications
             completionHandler([.banner, .sound])
         }
-
-        completionHandler([.banner, .sound])
     }
 
     // When user taps the notification
