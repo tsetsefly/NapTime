@@ -86,6 +86,11 @@ struct ContentView: View {
                     .font(.title2)
                     .monospacedDigit()
                     .foregroundColor(.red)
+            } else if countdownManager.alarmTriggered {
+                Text("🚨 Wake up!!! 🚨")
+                    .font(.title)
+                    .foregroundColor(.orange)
+                    .bold()
             }
 
             Button(action: {
@@ -143,13 +148,14 @@ struct ContentView: View {
 
     func tickCountdown() {
         guard countdownManager.isCountingDown,
-              let value = countdownManager.countdownValue,
-              value > 0 else { return }
+            let value = countdownManager.countdownValue,
+            value > 0 else { return }
 
         countdownManager.countdownValue = value - 1
 
         if countdownManager.countdownValue == 0 {
             countdownManager.isCountingDown = false
+            countdownManager.alarmTriggered = true // ✅ set alarm active
         }
     }
 }
