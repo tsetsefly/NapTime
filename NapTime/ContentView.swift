@@ -23,6 +23,9 @@ struct ContentView: View {
     @ObservedObject var countdownManager = CountdownManager.shared
     @State private var notificationPermissionGranted: Bool? = nil
     @State private var soundSetting: UNNotificationSetting = .notSupported
+    @State private var showSilentModeWarning = false
+    @State private var showRestoreSilentModeReminder = false
+    @State private var pendingAlarmTime: Int? = nil
 
     let countdownTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
@@ -95,7 +98,8 @@ struct ContentView: View {
             Divider()
 
             Button(action: {
-                scheduleAlarm(in: 5)
+                pendingAlarmTime = 5
+                showSilentModeWarning = true
             }) {
                 Text("TESTING: Set Alarm for 5 seconds")
                     .font(.headline)
@@ -111,7 +115,8 @@ struct ContentView: View {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                 ForEach(alarmOptions, id: \.seconds) { option in
                     Button(action: {
-                        scheduleAlarm(in: option.seconds)
+                        pendingAlarmTime = option.seconds
+                        showSilentModeWarning = true
                     }) {
                         Text(option.label)
                             .font(.headline)
@@ -139,7 +144,7 @@ struct ContentView: View {
             }
 
             Button(action: {
-                stopCountdown()
+                showRestoreSilentModeReminder = true
             }) {
                 Text("Stop Alarm")
                     .font(.headline)
@@ -160,6 +165,25 @@ struct ContentView: View {
                 countdownManager.stopCountdown()
             }
         }
+        .alert("Reminder", isPresented: $showSilentModeWarning, actions: {
+            Button("Continue") {
+                if let seconds = pendingAlarmTime {
+                    scheduleAlarm(in: seconds)
+                }
+            }
+            Button("Cancel", role: .cancel) {
+                pendingAlarmTime = nil
+            }
+        }, message: {
+            Text("Make sure your phone is not on Silent Mode or Do Not Disturb, otherwise the alarm may not sound.")
+        })
+        .alert("Reminder", isPresented: $showRestoreSilentModeReminder, actions: {
+            Button("OK") {
+                stopCountdown()
+            }
+        }, message: {
+            Text("You can now re-enable Silent Mode or Do Not Disturb if you'd like.")
+        })
     }
 
     func scheduleAlarm(in seconds: Int) {
@@ -197,8 +221,8 @@ struct ContentView: View {
 
     func tickCountdown() {
         guard countdownManager.isCountingDown,
-            let value = countdownManager.countdownValue,
-            value > 0 else { return }
+              let value = countdownManager.countdownValue,
+              value > 0 else { return }
 
         countdownManager.countdownValue = value - 1
 
