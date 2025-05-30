@@ -25,13 +25,14 @@ struct ContentView: View {
                 }
             }
 
-            Button("Set Alarm for 3 seconds from now") {
+            Button("Set Alarm for 5 seconds from now") {
                 let content = UNMutableNotificationContent()
                 content.title = "⏰ Alarm"
                 content.body = "Time to wake up!"
-                content.sound = UNNotificationSound.default
+                // content.sound = UNNotificationSound.default
+                content.sound = UNNotificationSound(named: UNNotificationSoundName("alarm.wav"))
 
-                let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 3, repeats: false)
+                let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
 
                 let request = UNNotificationRequest(
                     identifier: "alarmNotification",
@@ -43,7 +44,7 @@ struct ContentView: View {
                     if let error = error {
                         print("Error scheduling notification: \(error)")
                     } else {
-                        print("Alarm set for 3 seconds from now.")
+                        print("Alarm set for 5 seconds from now.")
                     }
                 }
             }
