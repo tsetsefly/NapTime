@@ -22,6 +22,7 @@ let alarmOptions: [(label: String, seconds: Int)] = [
 struct ContentView: View {
     @ObservedObject var countdownManager = CountdownManager.shared
     @State private var notificationPermissionGranted: Bool? = nil
+    @State private var soundSetting: UNNotificationSetting = .notSupported
 
     let countdownTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
@@ -32,7 +33,15 @@ struct ContentView: View {
                     settings.authorizationStatus == .authorized ||
                     settings.authorizationStatus == .provisional
                 )
+                soundSetting = settings.soundSetting
             }
+        }
+    }
+
+    func openSettings() {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        if UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
 
@@ -47,10 +56,31 @@ struct ContentView: View {
                     .foregroundColor(permission ? .green : .red)
             }
 
+            if soundSetting == .disabled {
+                VStack(spacing: 6) {
+                    Text("🔇 Notification sounds are disabled.\nAlarms may not be audible.")
+                        .font(.footnote)
+                        .foregroundColor(.red)
+                        .multilineTextAlignment(.center)
+
+                    Button("Open Settings") {
+                        openSettings()
+                    }
+                    .font(.footnote)
+                    .padding(6)
+                    .background(Color.red.opacity(0.1))
+                    .cornerRadius(6)
+                }
+            } else if soundSetting == .enabled {
+                Text("✅ Notification sounds are enabled.")
+                    .font(.footnote)
+                    .foregroundColor(.green)
+            }
+
             Button(action: {
                 UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { granted, _ in
                     print(granted ? "Permission granted" : "Permission denied")
-                    checkNotificationPermission() // ✅ refresh the status
+                    checkNotificationPermission()
                 }
             }) {
                 Text("Request Notification Permission")
@@ -62,20 +92,19 @@ struct ContentView: View {
                     .cornerRadius(10)
             }
 
-            // 5-sec button to assist during debugging
-            // Divider()
+            Divider()
 
-            // Button(action: {
-            //     scheduleAlarm(in: 5)
-            // }) {
-            //     Text("TESTING: Set Alarm for 5 seconds")
-            //         .font(.headline)
-            //         .padding()
-            //         .frame(maxWidth: .infinity)
-            //         .background(Color.blue)
-            //         .foregroundColor(.white)
-            //         .cornerRadius(10)
-            // }
+            Button(action: {
+                scheduleAlarm(in: 5)
+            }) {
+                Text("TESTING: Set Alarm for 5 seconds")
+                    .font(.headline)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
 
             Divider()
 
@@ -123,7 +152,7 @@ struct ContentView: View {
         }
         .padding()
         .onReceive(countdownTimer) { _ in
-            tickCountdown()
+            countdownManager.updateCountdown()
         }
         .onAppear {
             checkNotificationPermission()
@@ -134,12 +163,9 @@ struct ContentView: View {
     }
 
     func scheduleAlarm(in seconds: Int) {
-        // ✅ Stop any currently playing alarm
         AlarmSoundManager.shared.stopAlarm()
-
-        // ✅ Reset all alarm logic state
         AlarmSoundManager.shared.resetPlaybackState()
-        CountdownManager.shared.stopCountdown()  // 🔥 This clears countdown + "Wake up!!!"
+        CountdownManager.shared.stopCountdown()
 
         print("Alarm reset")
 
@@ -178,7 +204,7 @@ struct ContentView: View {
 
         if countdownManager.countdownValue == 0 {
             countdownManager.isCountingDown = false
-            countdownManager.alarmTriggered = true // ✅ set alarm active
+            countdownManager.alarmTriggered = true
         }
     }
 }
