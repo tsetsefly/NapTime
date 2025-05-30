@@ -8,6 +8,17 @@
 import SwiftUI
 import UserNotifications
 
+let alarmOptions: [(label: String, seconds: Int)] = [
+    ("10 minutes", 600),
+    ("13 minutes", 780),
+    ("15 minutes", 900),
+    ("20 minutes", 1200),
+    ("23 minutes", 1380),
+    ("25 minutes", 1500),
+    ("45 minutes", 2700),
+    ("60 minutes", 3600)
+]
+
 struct ContentView: View {
     @ObservedObject var countdownManager = CountdownManager.shared
     @State private var notificationPermissionGranted: Bool? = nil
@@ -51,32 +62,37 @@ struct ContentView: View {
                     .cornerRadius(10)
             }
 
+            // 5-sec button to assist during debugging
+            // Divider()
+
+            // Button(action: {
+            //     scheduleAlarm(in: 5)
+            // }) {
+            //     Text("TESTING: Set Alarm for 5 seconds")
+            //         .font(.headline)
+            //         .padding()
+            //         .frame(maxWidth: .infinity)
+            //         .background(Color.blue)
+            //         .foregroundColor(.white)
+            //         .cornerRadius(10)
+            // }
+
             Divider()
 
-            Button(action: {
-                scheduleAlarm(in: 5)
-            }) {
-                Text("TESTING: Set Alarm for 5 seconds")
-                    .font(.headline)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-            }
-
-            Divider()
-
-            Button(action: {
-                scheduleAlarm(in: 600)
-            }) {
-                Text("Set Alarm for 10 minutes")
-                    .font(.headline)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                ForEach(alarmOptions, id: \.seconds) { option in
+                    Button(action: {
+                        scheduleAlarm(in: option.seconds)
+                    }) {
+                        Text(option.label)
+                            .font(.headline)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                    }
+                }
             }
 
             Divider()
