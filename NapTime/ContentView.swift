@@ -40,6 +40,7 @@ struct ContentView: View {
     // Fires every 1 second to update UI countdown
     let countdownTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
+    // Queries notification permissions
     func checkNotificationPermission() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
@@ -64,12 +65,14 @@ struct ContentView: View {
             Text("NapTime Alarm")
                 .font(.largeTitle)
 
+            // Notification permission status text
             if let permission = notificationPermissionGranted {
                 Text(permission ? "🔔 Notifications Enabled" : "🚫 Notifications Disabled")
                     .font(.subheadline)
                     .foregroundColor(permission ? .green : .red)
             }
-
+            
+            // Sound setting status
             if soundSetting == .disabled {
                 VStack(spacing: 6) {
                     Text("🔇 Notification sounds are disabled.\nAlarms may not be audible.")
@@ -91,6 +94,7 @@ struct ContentView: View {
                     .foregroundColor(.green)
             }
 
+            // Request notifications permission button
             Button(action: {
                 UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { granted, _ in
                     print(granted ? "Permission granted" : "Permission denied")
@@ -124,6 +128,7 @@ struct ContentView: View {
 
             Divider()
 
+             // Alarm buttons in a grid
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                 ForEach(alarmOptions, id: \.seconds) { option in
                     Button(action: {
@@ -143,6 +148,7 @@ struct ContentView: View {
 
             Divider()
 
+            // Countdown display or wake-up alert
             if countdownManager.isCountingDown, let countdown = countdownManager.countdownValue {
                 Text("Alarm in: \(countdown)s")
                     .font(.title2)
@@ -155,6 +161,7 @@ struct ContentView: View {
                     .bold()
             }
 
+            // Stop alarm button
             Button(action: {
                 stopCountdown()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -201,6 +208,7 @@ struct ContentView: View {
         })
     }
 
+    // Schedules a local notification and starts countdown
     func scheduleAlarm(in seconds: Int) {
         AlarmSoundManager.shared.stopAlarm()
         AlarmSoundManager.shared.resetPlaybackState()
@@ -228,12 +236,14 @@ struct ContentView: View {
         }
     }
 
+    // Stops countdown and alarm sound
     func stopCountdown() {
         countdownManager.stopCountdown()
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["alarmNotification"])
         AlarmSoundManager.shared.stopAlarm()
     }
 
+    // Decrements countdown timer every second, when reaches 0 triggers alarm display state and stops countdown
     func tickCountdown() {
         guard countdownManager.isCountingDown,
               let value = countdownManager.countdownValue,
