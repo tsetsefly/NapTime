@@ -8,6 +8,7 @@
 import SwiftUI
 import UserNotifications
 
+// Defines preset alarm durations (label, time in seconds)
 let alarmOptions: [(label: String, seconds: Int)] = [
     ("10 minutes", 600),
     ("13 minutes", 780),
@@ -20,15 +21,25 @@ let alarmOptions: [(label: String, seconds: Int)] = [
 ]
 
 struct ContentView: View {
-    @ObservedObject var countdownManager = CountdownManager.shared
-    @State private var notificationPermissionGranted: Bool? = nil
+    // Tracks iOS sound permission (enabled/disabled)
     @State private var soundSetting: UNNotificationSetting = .notSupported
+    
+    // Shared countdown manager instance (tracks countdown + alarm state)
+    @ObservedObject var countdownManager = CountdownManager.shared
+    
+    // Tracks if user granted notification permissions
+    @State private var notificationPermissionGranted: Bool? = nil
+    
+    // Show alert before setting alarm (re: silent/DND warning)
     @State private var showSilentModeWarning = false
-    @State private var showRestoreSilentModeReminder = false
     @State private var pendingAlarmTime: Int? = nil
+    
+    // Show alert after stopping alarm (re-enable silent/DND)
+    @State private var showRestoreSilentModeReminder = false
 
+    // Fires every 1 second to update UI countdown
     let countdownTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-
+    
     func checkNotificationPermission() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
