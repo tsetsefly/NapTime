@@ -1,5 +1,6 @@
 import SwiftUI
 import AlarmKit
+import ActivityKit
 
 let alarmOptions: [(label: String, seconds: Int)] = [
     ("10 minutes", 600),
@@ -96,6 +97,10 @@ struct ContentView: View {
         .padding()
         .task {
             await requestAuthorization()
+            // Cancel any leftover alarms from previous runs
+            for alarm in alarmManager.alarms {
+                try? alarmManager.cancel(id: alarm.id)
+            }
         }
         .task {
             for await alarms in alarmManager.alarmUpdates {
@@ -123,26 +128,19 @@ struct ContentView: View {
         // Cancel any existing alarm first
         await cancelAlarm()
 
-        let stopButton = AlarmButton(
-            text: "Stop",
-            textColor: .white,
-            systemImageName: "stop.circle"
-        )
-
-        let alert = AlarmPresentation.Alert(
-            title: "Time to wake up!",
-            stopButton: stopButton
-        )
+        let alert = AlarmPresentation.Alert(title: "Time to wake up!")
+        let countdown = AlarmPresentation.Countdown(title: "Napping...")
+        let presentation = AlarmPresentation(alert: alert, countdown: countdown)
 
         let metadata = NapTimeMetadata(durationLabel: label)
 
         let attributes = AlarmAttributes<NapTimeMetadata>(
-            presentation: AlarmPresentation(alert: alert),
+            presentation: presentation,
             metadata: metadata,
             tintColor: .blue
         )
 
-        let sound = AlarmConfiguration.AlertSound.named("alarm")
+        let sound = AlertConfiguration.AlertSound.named("alarm")
 
         do {
             let alarm = try await alarmManager.schedule(
@@ -156,14 +154,14 @@ struct ContentView: View {
             activeAlarm = alarm
             errorMessage = nil
         } catch {
-            errorMessage = "Failed to schedule alarm: \(error.localizedDescription)"
+            errorMessage = "Failed to schedule alarm: \(error)"
         }
     }
 
     private func cancelAlarm() async {
         guard let alarm = activeAlarm else { return }
         do {
-            try await alarmManager.cancel(id: alarm.id)
+            try alarmManager.cancel(id: alarm.id)
             activeAlarm = nil
             errorMessage = nil
         } catch {
