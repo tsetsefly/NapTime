@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		652DE18F2DE95A0D00F08BE7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 652DE18E2DE95A0D00F08BE7 /* Assets.xcassets */; };
+		65EE72102F5FC5D9002B75D4 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65EE720F2F5FC5D9002B75D4 /* WidgetKit.framework */; };
+		65EE72122F5FC5D9002B75D4 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65EE72112F5FC5D9002B75D4 /* SwiftUI.framework */; };
+		65EE72232F5FC5DB002B75D4 /* NapTimeCountdownExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 65EE720D2F5FC5D9002B75D4 /* NapTimeCountdownExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -25,18 +28,62 @@
 			remoteGlobalIDString = 652DE1552DE689AA00F08BE7;
 			remoteInfo = NapTime;
 		};
+		65EE72212F5FC5DB002B75D4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 652DE14E2DE689AA00F08BE7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 65EE720C2F5FC5D9002B75D4;
+			remoteInfo = NapTimeCountdownExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		65EE72242F5FC5DB002B75D4 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				65EE72232F5FC5DB002B75D4 /* NapTimeCountdownExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		652DE1562DE689AA00F08BE7 /* NapTime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NapTime.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		652DE1632DE689AC00F08BE7 /* NapTimeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NapTimeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		652DE16D2DE689AC00F08BE7 /* NapTimeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NapTimeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		652DE18E2DE95A0D00F08BE7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		65EE720D2F5FC5D9002B75D4 /* NapTimeCountdownExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NapTimeCountdownExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		65EE720F2F5FC5D9002B75D4 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		65EE72112F5FC5D9002B75D4 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		65EE72272F5FC5DB002B75D4 /* Exceptions for "NapTimeCountdown" folder in "NapTimeCountdownExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 65EE720C2F5FC5D9002B75D4 /* NapTimeCountdownExtension */;
+		};
+		65EE724C2F5FC818002B75D4 /* Exceptions for "NapTime" folder in "NapTimeCountdownExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				NapTimeMetadata.swift,
+			);
+			target = 65EE720C2F5FC5D9002B75D4 /* NapTimeCountdownExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		652DE1582DE689AA00F08BE7 /* NapTime */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				65EE724C2F5FC818002B75D4 /* Exceptions for "NapTime" folder in "NapTimeCountdownExtension" target */,
+			);
 			path = NapTime;
 			sourceTree = "<group>";
 		};
@@ -48,6 +95,14 @@
 		652DE1702DE689AC00F08BE7 /* NapTimeUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = NapTimeUITests;
+			sourceTree = "<group>";
+		};
+		65EE72132F5FC5D9002B75D4 /* NapTimeCountdown */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				65EE72272F5FC5DB002B75D4 /* Exceptions for "NapTimeCountdown" folder in "NapTimeCountdownExtension" target */,
+			);
+			path = NapTimeCountdown;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -74,6 +129,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		65EE720A2F5FC5D9002B75D4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				65EE72122F5FC5D9002B75D4 /* SwiftUI.framework in Frameworks */,
+				65EE72102F5FC5D9002B75D4 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -84,6 +148,8 @@
 				652DE1582DE689AA00F08BE7 /* NapTime */,
 				652DE1662DE689AC00F08BE7 /* NapTimeTests */,
 				652DE1702DE689AC00F08BE7 /* NapTimeUITests */,
+				65EE72132F5FC5D9002B75D4 /* NapTimeCountdown */,
+				65EE720E2F5FC5D9002B75D4 /* Frameworks */,
 				652DE1572DE689AA00F08BE7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -94,8 +160,18 @@
 				652DE1562DE689AA00F08BE7 /* NapTime.app */,
 				652DE1632DE689AC00F08BE7 /* NapTimeTests.xctest */,
 				652DE16D2DE689AC00F08BE7 /* NapTimeUITests.xctest */,
+				65EE720D2F5FC5D9002B75D4 /* NapTimeCountdownExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		65EE720E2F5FC5D9002B75D4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				65EE720F2F5FC5D9002B75D4 /* WidgetKit.framework */,
+				65EE72112F5FC5D9002B75D4 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -108,10 +184,12 @@
 				652DE1522DE689AA00F08BE7 /* Sources */,
 				652DE1532DE689AA00F08BE7 /* Frameworks */,
 				652DE1542DE689AA00F08BE7 /* Resources */,
+				65EE72242F5FC5DB002B75D4 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				65EE72222F5FC5DB002B75D4 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				652DE1582DE689AA00F08BE7 /* NapTime */,
@@ -169,6 +247,28 @@
 			productReference = 652DE16D2DE689AC00F08BE7 /* NapTimeUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		65EE720C2F5FC5D9002B75D4 /* NapTimeCountdownExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 65EE72282F5FC5DB002B75D4 /* Build configuration list for PBXNativeTarget "NapTimeCountdownExtension" */;
+			buildPhases = (
+				65EE72092F5FC5D9002B75D4 /* Sources */,
+				65EE720A2F5FC5D9002B75D4 /* Frameworks */,
+				65EE720B2F5FC5D9002B75D4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				65EE72132F5FC5D9002B75D4 /* NapTimeCountdown */,
+			);
+			name = NapTimeCountdownExtension;
+			packageProductDependencies = (
+			);
+			productName = NapTimeCountdownExtension;
+			productReference = 65EE720D2F5FC5D9002B75D4 /* NapTimeCountdownExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -190,6 +290,9 @@
 						CreatedOnToolsVersion = 16.3;
 						TestTargetID = 652DE1552DE689AA00F08BE7;
 					};
+					65EE720C2F5FC5D9002B75D4 = {
+						CreatedOnToolsVersion = 16.3;
+					};
 				};
 			};
 			buildConfigurationList = 652DE1512DE689AA00F08BE7 /* Build configuration list for PBXProject "NapTime" */;
@@ -209,6 +312,7 @@
 				652DE1552DE689AA00F08BE7 /* NapTime */,
 				652DE1622DE689AC00F08BE7 /* NapTimeTests */,
 				652DE16C2DE689AC00F08BE7 /* NapTimeUITests */,
+				65EE720C2F5FC5D9002B75D4 /* NapTimeCountdownExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -230,6 +334,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		652DE16B2DE689AC00F08BE7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		65EE720B2F5FC5D9002B75D4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -260,6 +371,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		65EE72092F5FC5D9002B75D4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -272,6 +390,11 @@
 			isa = PBXTargetDependency;
 			target = 652DE1552DE689AA00F08BE7 /* NapTime */;
 			targetProxy = 652DE16E2DE689AC00F08BE7 /* PBXContainerItemProxy */;
+		};
+		65EE72222F5FC5DB002B75D4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 65EE720C2F5FC5D9002B75D4 /* NapTimeCountdownExtension */;
+			targetProxy = 65EE72212F5FC5DB002B75D4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -329,7 +452,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -387,7 +510,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -408,6 +531,7 @@
 				DEVELOPMENT_TEAM = YD23TDJV5N;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSAlarmKitUsageDescription = "NapTime uses alarms to wake you up after your nap.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -437,6 +561,7 @@
 				DEVELOPMENT_TEAM = YD23TDJV5N;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSAlarmKitUsageDescription = "NapTime uses alarms to wake you up after your nap.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -463,7 +588,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = YD23TDJV5N;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = tsetsefly.NapTimeTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -482,7 +607,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = YD23TDJV5N;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = tsetsefly.NapTimeTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -527,6 +652,62 @@
 			};
 			name = Release;
 		};
+		65EE72252F5FC5DB002B75D4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YD23TDJV5N;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NapTimeCountdown/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NapTimeCountdown;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = tsetsefly.NapTime.NapTimeCountdown;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		65EE72262F5FC5DB002B75D4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YD23TDJV5N;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NapTimeCountdown/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NapTimeCountdown;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = tsetsefly.NapTime.NapTimeCountdown;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -562,6 +743,15 @@
 			buildConfigurations = (
 				652DE17E2DE689AC00F08BE7 /* Debug */,
 				652DE17F2DE689AC00F08BE7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		65EE72282F5FC5DB002B75D4 /* Build configuration list for PBXNativeTarget "NapTimeCountdownExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				65EE72252F5FC5DB002B75D4 /* Debug */,
+				65EE72262F5FC5DB002B75D4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
