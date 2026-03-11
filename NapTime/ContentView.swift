@@ -24,6 +24,7 @@ struct ContentView: View {
 
     @State private var authorizationState: AlarmManager.AuthorizationState = .notDetermined
     @State private var activeAlarm: Alarm?
+    @State private var alarmFireDate: Date?
     @State private var errorMessage: String?
     @State private var debugMode = false
 
@@ -86,50 +87,60 @@ struct ContentView: View {
 
             Divider()
 
-            // Alarm buttons in a grid
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                ForEach(visibleOptions, id: \.seconds) { option in
+            if let fireDate = alarmFireDate, activeAlarm != nil {
+                // Countdown display
+                VStack(spacing: 12) {
+                    Text("Napping...")
+                        .font(.title2)
+                        .foregroundColor(.secondary)
+
+                    Text(timerInterval: Date.now ... fireDate, countsDown: true)
+                        .font(.system(size: 64, weight: .thin, design: .rounded))
+                        .monospacedDigit()
+
+                    // Debug: active alarm info
+                    if debugMode, let alarm = activeAlarm {
+                        VStack(spacing: 4) {
+                            Text("Alarm ID: \(alarm.id)")
+                            Text("State: \(String(describing: alarm.state))")
+                        }
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    }
+
                     Button(action: {
                         Task {
-                            await scheduleAlarm(seconds: option.seconds, label: option.label)
+                            await cancelAlarm()
                         }
                     }) {
-                        Text(option.label)
+                        Text("Stop Alarm")
                             .font(.headline)
                             .padding()
                             .frame(maxWidth: .infinity)
-                            .background(option.seconds < 60 ? Color.orange : Color.blue)
+                            .background(Color.red)
                             .foregroundColor(.white)
                             .cornerRadius(10)
                     }
                 }
-            }
-
-            Divider()
-
-            // Debug: active alarm info
-            if debugMode, let alarm = activeAlarm {
-                VStack(spacing: 4) {
-                    Text("Alarm ID: \(alarm.id)")
-                    Text("State: \(String(describing: alarm.state))")
+            } else {
+                // Alarm buttons in a grid
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    ForEach(visibleOptions, id: \.seconds) { option in
+                        Button(action: {
+                            Task {
+                                await scheduleAlarm(seconds: option.seconds, label: option.label)
+                            }
+                        }) {
+                            Text(option.label)
+                                .font(.headline)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(option.seconds < 60 ? Color.orange : Color.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(10)
+                        }
+                    }
                 }
-                .font(.caption)
-                .foregroundColor(.secondary)
-            }
-
-            // Cancel alarm button
-            Button(action: {
-                Task {
-                    await cancelAlarm()
-                }
-            }) {
-                Text("Stop Alarm")
-                    .font(.headline)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.red)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
             }
         }
         .padding()
@@ -145,6 +156,9 @@ struct ContentView: View {
         .task {
             for await alarms in alarmManager.alarmUpdates {
                 activeAlarm = alarms.first
+                if alarms.isEmpty {
+                    alarmFireDate = nil
+                }
             }
         }
     }
@@ -203,6 +217,7 @@ struct ContentView: View {
                 )
             )
             activeAlarm = alarm
+            alarmFireDate = Date.now.addingTimeInterval(TimeInterval(seconds))
             errorMessage = nil
         } catch {
             errorMessage = "Schedule failed (auth: \(alarmManager.authorizationState)): \(error)"
@@ -214,6 +229,7 @@ struct ContentView: View {
         do {
             try alarmManager.cancel(id: alarm.id)
             activeAlarm = nil
+            alarmFireDate = nil
             errorMessage = nil
         } catch {
             errorMessage = "Failed to cancel alarm: \(error.localizedDescription)"
