@@ -3,8 +3,6 @@ import AlarmKit
 import ActivityKit
 
 let alarmOptions: [(label: String, seconds: Int)] = [
-    ("3 seconds", 3),
-    ("10 seconds", 10),
     ("10 minutes", 600),
     ("13 minutes", 780),
     ("15 minutes", 900),
@@ -15,34 +13,58 @@ let alarmOptions: [(label: String, seconds: Int)] = [
     ("60 minutes", 3600)
 ]
 
+let debugAlarmOptions: [(label: String, seconds: Int)] = [
+    ("3 seconds", 3),
+    ("10 seconds", 10),
+    ("30 seconds", 30),
+]
+
 struct ContentView: View {
     private let alarmManager = AlarmManager.shared
 
     @State private var authorizationState: AlarmManager.AuthorizationState = .notDetermined
     @State private var activeAlarm: Alarm?
     @State private var errorMessage: String?
+    @State private var debugMode = false
+
+    private var visibleOptions: [(label: String, seconds: Int)] {
+        debugMode ? debugAlarmOptions + alarmOptions : alarmOptions
+    }
 
     var body: some View {
         VStack(spacing: 20) {
-            Text("NapTime Alarm")
-                .font(.largeTitle)
+            HStack {
+                Spacer()
+                Text("NapTime Alarm")
+                    .font(.largeTitle)
+                Spacer()
+            }
+            .onTapGesture(count: 3) {
+                debugMode.toggle()
+            }
 
-            // Authorization status
-            switch authorizationState {
-            case .authorized:
-                Text("Alarms Enabled")
-                    .font(.subheadline)
-                    .foregroundColor(.green)
-            case .denied:
+            // Authorization status (only shown in debug mode or when not authorized)
+            if debugMode {
+                switch authorizationState {
+                case .authorized:
+                    Text("Alarms Enabled")
+                        .font(.subheadline)
+                        .foregroundColor(.green)
+                case .denied:
+                    Text("Alarms Disabled — enable in Settings")
+                        .font(.subheadline)
+                        .foregroundColor(.red)
+                case .notDetermined:
+                    Text("Alarm permission not yet requested")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                @unknown default:
+                    EmptyView()
+                }
+            } else if authorizationState == .denied {
                 Text("Alarms Disabled — enable in Settings")
                     .font(.subheadline)
                     .foregroundColor(.red)
-            case .notDetermined:
-                Text("Alarm permission not yet requested")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-            @unknown default:
-                EmptyView()
             }
 
             if let errorMessage {
@@ -51,11 +73,22 @@ struct ContentView: View {
                     .foregroundColor(.red)
             }
 
+            if debugMode {
+                Text("DEBUG MODE")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .foregroundColor(.orange)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .background(Color.orange.opacity(0.15))
+                    .cornerRadius(4)
+            }
+
             Divider()
 
             // Alarm buttons in a grid
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                ForEach(alarmOptions, id: \.seconds) { option in
+                ForEach(visibleOptions, id: \.seconds) { option in
                     Button(action: {
                         Task {
                             await scheduleAlarm(seconds: option.seconds, label: option.label)
@@ -65,7 +98,7 @@ struct ContentView: View {
                             .font(.headline)
                             .padding()
                             .frame(maxWidth: .infinity)
-                            .background(Color.blue)
+                            .background(option.seconds < 60 ? Color.orange : Color.blue)
                             .foregroundColor(.white)
                             .cornerRadius(10)
                     }
@@ -74,11 +107,14 @@ struct ContentView: View {
 
             Divider()
 
-            // Active alarm info
-            if let alarm = activeAlarm {
-                Text("Alarm active: \(alarm.id)")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+            // Debug: active alarm info
+            if debugMode, let alarm = activeAlarm {
+                VStack(spacing: 4) {
+                    Text("Alarm ID: \(alarm.id)")
+                    Text("State: \(String(describing: alarm.state))")
+                }
+                .font(.caption)
+                .foregroundColor(.secondary)
             }
 
             // Cancel alarm button
