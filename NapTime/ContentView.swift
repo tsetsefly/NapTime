@@ -3,6 +3,8 @@ import AlarmKit
 import ActivityKit
 
 let alarmOptions: [(label: String, seconds: Int)] = [
+    ("3 seconds", 3),
+    ("10 seconds", 10),
     ("10 minutes", 600),
     ("13 minutes", 780),
     ("15 minutes", 900),
@@ -98,8 +100,10 @@ struct ContentView: View {
         .task {
             await requestAuthorization()
             // Cancel any leftover alarms from previous runs
-            for alarm in alarmManager.alarms {
-                try? alarmManager.cancel(id: alarm.id)
+            if let alarms = try? alarmManager.alarms {
+                for alarm in alarms {
+                    try? alarmManager.cancel(id: alarm.id)
+                }
             }
         }
         .task {
@@ -125,6 +129,20 @@ struct ContentView: View {
     }
 
     private func scheduleAlarm(seconds: Int, label: String) async {
+        // Ensure we have authorization before scheduling
+        if alarmManager.authorizationState != .authorized {
+            do {
+                authorizationState = try await alarmManager.requestAuthorization()
+            } catch {
+                errorMessage = "Auth failed: \(error)"
+                return
+            }
+            guard authorizationState == .authorized else {
+                errorMessage = "Alarms not authorized (state: \(authorizationState))"
+                return
+            }
+        }
+
         // Cancel any existing alarm first
         await cancelAlarm()
 
@@ -140,21 +158,18 @@ struct ContentView: View {
             tintColor: .blue
         )
 
-        let sound = AlertConfiguration.AlertSound.named("alarm")
-
         do {
             let alarm = try await alarmManager.schedule(
                 id: UUID(),
                 configuration: .timer(
                     duration: TimeInterval(seconds),
-                    attributes: attributes,
-                    sound: sound
+                    attributes: attributes
                 )
             )
             activeAlarm = alarm
             errorMessage = nil
         } catch {
-            errorMessage = "Failed to schedule alarm: \(error)"
+            errorMessage = "Schedule failed (auth: \(alarmManager.authorizationState)): \(error)"
         }
     }
 
