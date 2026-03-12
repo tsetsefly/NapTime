@@ -17,6 +17,7 @@ let debugAlarmOptions: [(label: String, seconds: Int)] = [
     ("3 seconds", 3),
     ("10 seconds", 10),
     ("30 seconds", 30),
+    ("1 minute", 60),
 ]
 
 struct ContentView: View {
