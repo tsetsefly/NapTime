@@ -1,5 +1,6 @@
 import ActivityKit
 import AlarmKit
+import AppIntents
 import WidgetKit
 import SwiftUI
 
@@ -13,6 +14,15 @@ struct NapTimeCountdownLiveActivity: Widget {
                 CountdownTextView(state: context.state)
                     .font(.largeTitle)
                     .monospacedDigit()
+
+                if case .countdown = context.state.mode {
+                    Button(intent: StopAlarmIntent()) {
+                        Label("Stop", systemImage: "stop.circle.fill")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                    }
+                    .tint(.red)
+                }
             }
             .padding()
             .activityBackgroundTint(Color.blue.opacity(0.8))
@@ -29,8 +39,17 @@ struct NapTimeCountdownLiveActivity: Widget {
                         .font(.headline)
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    CountdownProgressView(state: context.state)
-                        .frame(maxHeight: 30)
+                    HStack {
+                        CountdownProgressView(state: context.state)
+                            .frame(maxHeight: 30)
+                        if case .countdown = context.state.mode {
+                            Button(intent: StopAlarmIntent()) {
+                                Image(systemName: "stop.circle.fill")
+                                    .font(.title2)
+                            }
+                            .tint(.red)
+                        }
+                    }
                 }
             } compactLeading: {
                 Image(systemName: "alarm.fill")

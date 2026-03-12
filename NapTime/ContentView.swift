@@ -213,7 +213,8 @@ struct ContentView: View {
                 id: UUID(),
                 configuration: .timer(
                     duration: TimeInterval(seconds),
-                    attributes: attributes
+                    attributes: attributes,
+                    stopIntent: StopAlarmIntent()
                 )
             )
             activeAlarm = alarm

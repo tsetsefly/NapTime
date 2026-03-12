@@ -73,6 +73,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				NapTimeMetadata.swift,
+				StopAlarmIntent.swift,
 			);
 			target = 65EE720C2F5FC5D9002B75D4 /* NapTimeCountdownExtension */;
 		};
