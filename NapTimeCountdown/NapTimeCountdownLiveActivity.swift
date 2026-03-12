@@ -8,18 +8,21 @@ struct NapTimeCountdownLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: AlarmAttributes<NapTimeMetadata>.self) { context in
             // Lock screen / banner UI
-            VStack(spacing: 8) {
-                Text("NapTime")
-                    .font(.headline)
-                CountdownTextView(state: context.state)
-                    .font(.largeTitle)
-                    .monospacedDigit()
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("NapTime")
+                        .font(.headline)
+                    CountdownTextView(state: context.state)
+                        .font(.largeTitle)
+                        .monospacedDigit()
+                }
+
+                Spacer()
 
                 if case .countdown = context.state.mode {
                     Button(intent: StopAlarmIntent()) {
-                        Label("Stop", systemImage: "stop.circle.fill")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
+                        Image(systemName: "stop.circle.fill")
+                            .font(.system(size: 36))
                     }
                     .tint(.red)
                 }
