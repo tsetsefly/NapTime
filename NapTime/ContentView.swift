@@ -87,7 +87,7 @@ struct ContentView: View {
 
             Divider()
 
-            if let fireDate = alarmFireDate, activeAlarm != nil {
+            if let fireDate = alarmFireDate, activeAlarm != nil, fireDate > Date.now {
                 // Countdown display
                 VStack(spacing: 12) {
                     Text("Napping...")
