@@ -136,7 +136,7 @@ struct ContentView: View {
                                 .font(.headline)
                                 .padding()
                                 .frame(maxWidth: .infinity)
-                                .background(option.seconds < 60 ? Color.orange : Color.blue)
+                                .background(debugAlarmOptions.contains(where: { $0.seconds == option.seconds }) ? Color.orange : Color.blue)
                                 .foregroundColor(.white)
                                 .cornerRadius(10)
                         }
