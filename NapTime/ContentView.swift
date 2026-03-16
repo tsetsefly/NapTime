@@ -201,7 +201,7 @@ struct ContentView: View {
         let countdown = AlarmPresentation.Countdown(title: "Napping...")
         let presentation = AlarmPresentation(alert: alert, countdown: countdown)
 
-        let metadata = NapTimeMetadata(durationLabel: label)
+        let metadata = NapTimeMetadata(durationLabel: label, durationSeconds: seconds)
 
         let attributes = AlarmAttributes<NapTimeMetadata>(
             presentation: presentation,
@@ -220,6 +220,7 @@ struct ContentView: View {
             )
             activeAlarm = alarm
             alarmFireDate = Date.now.addingTimeInterval(TimeInterval(seconds))
+            RestartAlarmIntent.saveLastAlarm(seconds: seconds, label: label)
             errorMessage = nil
         } catch {
             errorMessage = "Schedule failed (auth: \(alarmManager.authorizationState)): \(error)"

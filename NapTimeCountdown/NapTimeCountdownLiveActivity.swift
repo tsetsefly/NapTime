@@ -20,11 +20,19 @@ struct NapTimeCountdownLiveActivity: Widget {
                 Spacer()
 
                 if case .countdown = context.state.mode {
-                    Button(intent: StopAlarmIntent()) {
-                        Image(systemName: "stop.circle.fill")
-                            .font(.system(size: 36))
+                    HStack(spacing: 12) {
+                        Button(intent: RestartAlarmIntent()) {
+                            Image(systemName: "arrow.counterclockwise.circle.fill")
+                                .font(.system(size: 36))
+                        }
+                        .tint(.orange)
+
+                        Button(intent: StopAlarmIntent()) {
+                            Image(systemName: "stop.circle.fill")
+                                .font(.system(size: 36))
+                        }
+                        .tint(.red)
                     }
-                    .tint(.red)
                 }
             }
             .padding()
@@ -46,6 +54,11 @@ struct NapTimeCountdownLiveActivity: Widget {
                         CountdownProgressView(state: context.state)
                             .frame(maxHeight: 30)
                         if case .countdown = context.state.mode {
+                            Button(intent: RestartAlarmIntent()) {
+                                Image(systemName: "arrow.counterclockwise.circle.fill")
+                                    .font(.title2)
+                            }
+                            .tint(.orange)
                             Button(intent: StopAlarmIntent()) {
                                 Image(systemName: "stop.circle.fill")
                                     .font(.title2)
