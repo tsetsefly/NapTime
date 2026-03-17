@@ -19,29 +19,41 @@ Most development is done by opening `NapTime.xcodeproj` in Xcode directly. Alarm
 
 ## Architecture
 
-The app uses AlarmKit for all alarm scheduling, countdown display, and alert delivery.
+The app uses AlarmKit for all alarm scheduling, countdown display, and alert delivery. See `docs/codebase-overview.md` for a detailed walkthrough of every file and the alarm lifecycle.
 
 ### Main App (`NapTime/`)
 
-- **ContentView.swift** — Main UI. Displays an alarm duration grid (or an in-app countdown timer when an alarm is active). Schedules alarms via `AlarmManager.shared.schedule()` and listens to `alarmManager.alarmUpdates` for state changes. Includes a hidden debug mode (triple-tap the title) with short test durations.
-- **NapTimeApp.swift** — Minimal `@main` entry point with a `WindowGroup`.
-- **NapTimeMetadata.swift** — Shared struct conforming to `AlarmMetadata` protocol with a `durationLabel` property. Used by both the main app and widget extension.
-- **StopAlarmIntent.swift** — `LiveActivityIntent` that cancels all active alarms. Used by the Lock Screen/Dynamic Island stop button and passed as `stopIntent` when scheduling.
-- **alarm.wav** — Alarm sound file in the app bundle.
+- **ContentView.swift** — Main UI with alarm duration grid and in-app countdown timer. Schedules alarms via `AlarmManager.shared.schedule()` and listens to `alarmManager.alarmUpdates` for state changes.
+- **NapTimeApp.swift** — Minimal `@main` entry point.
+- **NapTimeMetadata.swift** — Shared `AlarmMetadata` struct with `durationLabel` and `durationSeconds`. Used by both targets.
+- **StopAlarmIntent.swift** — `LiveActivityIntent` that cancels all active alarms. Used by Lock Screen/Dynamic Island stop button.
+- **RestartAlarmIntent.swift** — `LiveActivityIntent` that cancels and reschedules with the same duration. Reads/writes duration to App Group UserDefaults.
+- **alarm.wav** — Custom alarm sound, referenced via `AlertConfiguration.AlertSound.named("alarm")`.
+- **PrivacyInfo.xcprivacy** — Privacy manifest declaring UserDefaults API usage.
+- **NapTime.entitlements** — App Group entitlement for sharing data with widget extension.
 
 ### Widget Extension (`NapTimeCountdown/`)
 
-- **NapTimeCountdownLiveActivity.swift** — Live Activity widget for Lock Screen and Dynamic Island. Shows countdown timer with an inline stop button. Uses `AlarmAttributes<NapTimeMetadata>` and `AlarmPresentationState`.
+- **NapTimeCountdownLiveActivity.swift** — Live Activity for Lock Screen and Dynamic Island. Shows countdown, restart button (orange), and stop button (red).
 - **NapTimeCountdownBundle.swift** — `@main` widget bundle entry point.
+- **NapTimeCountdown.entitlements** — App Group entitlement matching the main app.
 
 ### Configuration
 
-- **Info.plist** (project root) — Contains `NSAlarmKitUsageDescription`. Placed at the project root (not inside `NapTime/`) to avoid conflicts with the file system synchronized build phase.
+- **Info.plist** (project root) — Contains `NSAlarmKitUsageDescription` and `CFBundleDisplayName`. At project root (not inside `NapTime/`) to avoid conflicts with file system synchronized build phase.
 
 ## Key Patterns
 
-- Alarm durations are defined in `alarmOptions` (production) and `debugAlarmOptions` (debug mode) arrays in ContentView.swift.
 - `AlarmManager.shared` is the single point of contact for scheduling, canceling, and monitoring alarms.
-- `NapTimeMetadata.swift` is shared between the app and widget extension via target membership exceptions in the project file.
-- `StopAlarmIntent` is also shared between both targets for interactive stop buttons.
-- Debug mode is toggled by triple-tapping the "NapTime Alarm" title — shows test durations (3s, 10s, 30s, 1m), authorization status, and alarm state info.
+- Three files are shared between app and widget extension via target membership exceptions: `NapTimeMetadata.swift`, `StopAlarmIntent.swift`, `RestartAlarmIntent.swift`.
+- App Group `group.tsetsefly.NapTime` enables shared UserDefaults between the app and widget extension (used by RestartAlarmIntent to persist last alarm duration).
+- Debug mode (`#if DEBUG` only) is toggled by triple-tapping the title — shows test durations, authorization status, and alarm state.
+- All user-facing error messages are friendly text; raw errors are not exposed.
+
+## Docs
+
+- `docs/codebase-overview.md` — Comprehensive context doc for resuming work on this project
+- `docs/app-store-readiness.md` — Pre-submission checklist with status
+- `docs/alarmkit-migration-plan.md` — Original migration plan from UNNotificationRequest to AlarmKit
+- `docs/migration-status.md` — Migration phase tracker
+- `docs/refactor-plan.md` — Post-migration cleanup tasks
