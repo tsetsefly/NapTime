@@ -1,6 +1,5 @@
 import SwiftUI
 import AlarmKit
-import ActivityKit
 
 let alarmOptions: [(label: String, seconds: Int)] = [
     ("10 minutes", 600),
@@ -13,12 +12,14 @@ let alarmOptions: [(label: String, seconds: Int)] = [
     ("60 minutes", 3600)
 ]
 
+#if DEBUG
 let debugAlarmOptions: [(label: String, seconds: Int)] = [
     ("3 seconds", 3),
     ("10 seconds", 10),
     ("30 seconds", 30),
     ("1 minute", 60),
 ]
+#endif
 
 struct ContentView: View {
     private let alarmManager = AlarmManager.shared
@@ -27,10 +28,16 @@ struct ContentView: View {
     @State private var activeAlarm: Alarm?
     @State private var alarmFireDate: Date?
     @State private var errorMessage: String?
+    #if DEBUG
     @State private var debugMode = false
+    #endif
 
     private var visibleOptions: [(label: String, seconds: Int)] {
+        #if DEBUG
         debugMode ? debugAlarmOptions + alarmOptions : alarmOptions
+        #else
+        alarmOptions
+        #endif
     }
 
     var body: some View {
@@ -41,11 +48,14 @@ struct ContentView: View {
                     .font(.largeTitle)
                 Spacer()
             }
+            #if DEBUG
             .onTapGesture(count: 3) {
                 debugMode.toggle()
             }
+            #endif
 
-            // Authorization status (only shown in debug mode or when not authorized)
+            // Authorization status
+            #if DEBUG
             if debugMode {
                 switch authorizationState {
                 case .authorized:
@@ -68,6 +78,13 @@ struct ContentView: View {
                     .font(.subheadline)
                     .foregroundColor(.red)
             }
+            #else
+            if authorizationState == .denied {
+                Text("Alarms Disabled — enable in Settings")
+                    .font(.subheadline)
+                    .foregroundColor(.red)
+            }
+            #endif
 
             if let errorMessage {
                 Text(errorMessage)
@@ -75,6 +92,7 @@ struct ContentView: View {
                     .foregroundColor(.red)
             }
 
+            #if DEBUG
             if debugMode {
                 Text("DEBUG MODE")
                     .font(.caption)
@@ -85,6 +103,7 @@ struct ContentView: View {
                     .background(Color.orange.opacity(0.15))
                     .cornerRadius(4)
             }
+            #endif
 
             Divider()
 
@@ -99,6 +118,7 @@ struct ContentView: View {
                         .font(.system(size: 64, weight: .thin, design: .rounded))
                         .monospacedDigit()
 
+                    #if DEBUG
                     // Debug: active alarm info
                     if debugMode, let alarm = activeAlarm {
                         VStack(spacing: 4) {
@@ -108,6 +128,7 @@ struct ContentView: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                     }
+                    #endif
 
                     Button(action: {
                         Task {
@@ -136,7 +157,11 @@ struct ContentView: View {
                                 .font(.headline)
                                 .padding()
                                 .frame(maxWidth: .infinity)
+                                #if DEBUG
                                 .background(debugAlarmOptions.contains(where: { $0.seconds == option.seconds }) ? Color.orange : Color.blue)
+                                #else
+                                .background(Color.blue)
+                                #endif
                                 .foregroundColor(.white)
                                 .cornerRadius(10)
                         }
@@ -170,7 +195,7 @@ struct ContentView: View {
             do {
                 authorizationState = try await alarmManager.requestAuthorization()
             } catch {
-                errorMessage = "Failed to request alarm permission: \(error.localizedDescription)"
+                errorMessage = "Unable to enable alarms. Please check Settings."
             }
         case .authorized, .denied:
             authorizationState = alarmManager.authorizationState
@@ -185,11 +210,11 @@ struct ContentView: View {
             do {
                 authorizationState = try await alarmManager.requestAuthorization()
             } catch {
-                errorMessage = "Auth failed: \(error)"
+                errorMessage = "Unable to enable alarms. Please check Settings."
                 return
             }
             guard authorizationState == .authorized else {
-                errorMessage = "Alarms not authorized (state: \(authorizationState))"
+                errorMessage = "Alarms are not enabled. Please allow alarms in Settings."
                 return
             }
         }
@@ -215,7 +240,8 @@ struct ContentView: View {
                 configuration: .timer(
                     duration: TimeInterval(seconds),
                     attributes: attributes,
-                    stopIntent: StopAlarmIntent()
+                    stopIntent: StopAlarmIntent(),
+                    sound: .named("alarm")
                 )
             )
             activeAlarm = alarm
@@ -223,7 +249,7 @@ struct ContentView: View {
             RestartAlarmIntent.saveLastAlarm(seconds: seconds, label: label)
             errorMessage = nil
         } catch {
-            errorMessage = "Schedule failed (auth: \(alarmManager.authorizationState)): \(error)"
+            errorMessage = "Could not set alarm. Please try again."
         }
     }
 
@@ -235,7 +261,7 @@ struct ContentView: View {
             alarmFireDate = nil
             errorMessage = nil
         } catch {
-            errorMessage = "Failed to cancel alarm: \(error.localizedDescription)"
+            errorMessage = "Could not stop alarm. Please try again."
         }
     }
 }
